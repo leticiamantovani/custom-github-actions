@@ -1,4 +1,4 @@
-name: Notify Slack Channel on Pull Request
+name: Notify Slack on Pull Request
 
 on:
   pull_request:
@@ -15,12 +15,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set environment variables
+      - name: Set Environment Variables
         run: |
           echo "PR_TITLE=${{ github.event.pull_request.title }}" >> $GITHUB_ENV
           echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_ENV
           echo "PR_ACTION=${{ github.event.action }}" >> $GITHUB_ENV
-          echo "PR_AUTHOR=${{ github.actor }}" >> $GITHUB_ENV
+          echo "PR_AUTHOR=${{ github.event.pull_request.user.login }}" >> $GITHUB_ENV
+          echo "GITHUB_REPOSITORY=${{ github.repository }}" >> $GITHUB_ENV
 
       - name: Install Python dependencies
         run: |
@@ -31,3 +32,8 @@ jobs:
         run: python notify.py
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          PR_TITLE: ${{ env.PR_TITLE }}
+          PR_URL: ${{ env.PR_URL }}
+          PR_ACTION: ${{ env.PR_ACTION }}
+          PR_AUTHOR: ${{ env.PR_AUTHOR }}
+          GITHUB_REPOSITORY: ${{ env.GITHUB_REPOSITORY }}
