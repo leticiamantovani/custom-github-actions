@@ -34,11 +34,10 @@ When running the action locally, you need to set the following environment varia
 
 ## Inputs (GitHub Action)
 
-When using the action in a GitHub Actions workflow, you need to set the following inputs:
+When using the action in a GitHub Actions workflow, you need to set the following inputs as **SECRETS** environment variables:
 
 | Name         | Required | Description                                              |
 | ------------ | -------- | -------------------------------------------------------- |
-| service      | Yes      | The notification service: `slack`, `discord`, or `teams` |
 | webhook_url | Yes      | Webhook URL for the selected service                     |
 
 ---
