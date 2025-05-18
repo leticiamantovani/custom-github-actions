@@ -44,8 +44,7 @@ class TeamsService(NotificationService):
                     "targets": [
                         {
                             "os": "default",
-                            "uri": payload.get("attachments", [{}])[0]
-                                   .get("title_link")
+                            "uri": payload.get("attachments", [{}])[0].get("title_link")
                         }
                     ]
                 }
