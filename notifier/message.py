@@ -1,6 +1,13 @@
 from typing import Dict
 
-def build_message(pr_action: str, pr_title: str, pr_url: str, pr_author: str, repo_name: str) -> Dict:
+
+def build_message(
+    pr_action: str,
+    pr_title: str,
+    pr_url: str,
+    pr_author: str,
+    repo_name: str
+) -> Dict:
     action_messages = {
         "opened": "🚀 New Pull Request Opened!",
         "closed": "❌ Pull Request Closed!",
@@ -18,7 +25,10 @@ def build_message(pr_action: str, pr_title: str, pr_url: str, pr_author: str, re
             {
                 "title": pr_title,
                 "title_link": pr_url,
-                "text": f"👤 Author: {pr_author}\n📂 Repository: {repo_name}",
+                "text": (
+                    f"👤 Author: {pr_author}\n"
+                    f"📂 Repository: {repo_name}"
+                ),
                 "color": "#36a64f"
             }
         ]
