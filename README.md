@@ -114,7 +114,6 @@ docker run --rm \
 ## Development & CI
 
 * All code is typed and modular, ready for testing and CI
-* Linting is enforced with flake8
 * Easily extensible for new integrations
 
 ---
