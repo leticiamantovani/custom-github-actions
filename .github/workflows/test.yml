@@ -9,7 +9,7 @@ on:
       - '.github/workflows/test.yml'
 
 jobs:
-  lint-test:
+  tests:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
