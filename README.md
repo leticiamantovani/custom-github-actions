@@ -1,59 +1,130 @@
-# 🚀 GitHub Actions - Slack Pull Request Notifier
+# 🚀 Pull Request Notifier (GitHub Action)
 
-This repository contains a **GitHub Actions workflow** and a **Python script (`notify.py`)** to send notifications to a **Slack channel** whenever a Pull Request is **opened, closed, approved, or rejected** in a GitHub repository.
-
----
-
-## 📌 Features
-✅ **Automatic Slack notifications** when a PR is opened, closed, approved, or rejected.  
-✅ **Reusable GitHub Action** that can be used across multiple repositories.  
-✅ **Secure Webhook Integration** using GitHub Secrets.  
-✅ **Customizable message formatting for Slack**.  
+A robust, reusable GitHub Action that sends Pull Request notifications to **Slack**, **Discord**, or **Microsoft Teams** using customizable webhooks.
 
 ---
 
-## 📜 How It Works
+## Features
 
-1. A **GitHub Actions workflow** triggers on Pull Request events.  
-2. The workflow **extracts PR details** and sets environment variables.  
-3. The `notify.py` script **sends a formatted message to Slack** via webhook.  
+* 🔔 Automatic notifications on PR events (opened, closed, reopened, review requested, review request removed)
+* 💡 Supports Slack, Discord, and Teams via webhooks
+* ♻️ **Reusable GitHub Action**: plug-and-play in any repository
+* ✅ Typed Python code with error handling, logging, and validation
+* 📦 Ready for CI and linting
+* 🔒 Secure integration with GitHub Secrets
 
 ---
 
-## 🛠️ Setup Instructions
+## Inputs (Local Testing)
 
-### **1. Create a Slack Webhook URL**
-- Go to [Slack API](https://api.slack.com/apps).
-- Create a new app and enable **Incoming Webhooks**.
-- Add a new **Webhook URL** to the desired Slack channel and copy the generated URL.
+When running the action locally, you need to set the following environment variables:
 
-### **2. Add the Webhook URL as a GitHub Secret**
-- In your GitHub repository, go to `Settings > Secrets and Variables > Actions > New repository secret`.
-- Create a secret named **`SLACK_WEBHOOK_URL`** and paste the copied webhook URL.
+| Name         | Required | Description                                              |
+| ------------ | -------- | -------------------------------------------------------- |
+| service      | Yes      | The notification service: `slack`, `discord`, or `teams` |
+| webhook_url | Yes      | Webhook URL for the selected service                     |
+| pr_title    | Yes      | Pull Request title                                       |
+| pr_url      | Yes      | Pull Request URL                                         |
+| pr_action   | Yes      | Pull Request action (`opened`, `closed`, etc.)           |
+| pr_author   | Yes      | Author of the Pull Request                               |
+| repo_name   | Yes      | GitHub repository name                                   |
 
-### **3. Use the Workflow in Other Repositories**
-In any repository where you want to use this Slack notification, create a workflow file:
+> **ℹ️ Note:**
+> You only need to provide these values manually when running or testing the action locally, **not** when using it inside a GitHub Actions workflow.
 
-📄 `.github/workflows/slack-notify.yml`:
+## Inputs (GitHub Action)
+
+When using the action in a GitHub Actions workflow, you need to set the following inputs as **SECRETS** environment variables:
+
+| Name         | Required | Description                                              |
+| ------------ | -------- | -------------------------------------------------------- |
+| webhook_url | Yes      | Webhook URL for the selected service                     |
+
+---
+
+## Example Usage (as a reusable GitHub Action)
+
+> **This project is a reusable GitHub Action.**
+> When used in a GitHub Actions workflow, you do **not** need to set PR-related values manually.
+> The GitHub Actions runner automatically provides all Pull Request information using built-in context variables.
+> You can use as many services as you want in the same workflow, just define environment variables for each service.
 
 ```yaml
-name: Call Slack Notification Workflow
+name: Pull Request Notifier
 
 on:
   pull_request:
-    types:
-      - opened
-      - closed
-      - review_requested
-      - review_request_removed
+    types: [opened, closed, reopened, review_requested, review_request_removed]
 
 jobs:
-  call-slack-action:
-    uses: your-username/github-actions-slack/.github/workflows/slack-notify.yml@main
-    with:
-      pr_title: ${{ github.event.pull_request.title }}
-      pr_url: ${{ github.event.pull_request.html_url }}
-      pr_action: ${{ github.event.action }}
-      pr_author: ${{ github.actor }}
-    secrets:
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on Slack
+        uses: leticiamantovani/custom-github-actions@main
+        with:
+          service: 'slack'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_action: ${{ github.event.action }}
+          pr_author: ${{ github.event.pull_request.user.login }}
+          repo_name: ${{ github.repository }}
+```
+
+---
+
+## How to Run Locally for Development
+
+If you want to test the action outside of GitHub Actions (for example, during development), you must manually set the required environment variables:
+
+```sh
+# Example for Slack
+export SERVICE=slack
+export WEBHOOK_URL=https://hooks.slack.com/services/XXX/YYY/ZZZ
+export PR_TITLE="Test PR"
+export PR_URL="https://github.com/your-user/repo/pull/1"
+export PR_ACTION=opened
+export PR_AUTHOR=octocat
+export GITHUB_REPOSITORY=your-user/repo
+
+python -m notifier.main
+```
+
+Or with Docker:
+
+```sh
+docker build -t pr-notifier .
+docker run --rm \
+  -e SERVICE=slack \
+  -e WEBHOOK_URL="https://hooks.slack.com/services/XXX/YYY/ZZZ" \
+  -e PR_TITLE="Test PR" \
+  -e PR_URL="https://github.com/your-user/repo/pull/1" \
+  -e PR_ACTION="opened" \
+  -e PR_AUTHOR="leticia" \
+  -e GITHUB_REPOSITORY="your-user/repo" \
+  pr-notifier
+```
+
+> Change `SERVICE` and `WEBHOOK_URL` as needed to test with Discord or Teams.
+
+---
+
+## Development & CI
+
+* All code is typed and modular, ready for testing and CI
+* Easily extensible for new integrations
+
+---
+
+## Security
+
+* Webhook URLs and secrets are never logged or exposed
+* All secrets are handled via GitHub Actions Secrets
+
+---
+
+## Images examples
+![Slack Example](images/image.png)
+
+### **Ready to use for any engineering team. Feel free to contribute or extend!**
