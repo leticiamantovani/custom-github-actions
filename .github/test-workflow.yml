@@ -1,0 +1,20 @@
+name: Test PR Notifier
+
+on:
+  pull_request:
+    types: [opened, closed, reopened, review_requested, review_request_removed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify on Slack
+        uses: ./
+        with:
+          service: 'slack'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_action: ${{ github.event.action }}
+          pr_author: ${{ github.event.pull_request.user.login }}
+          repo_name: ${{ github.repository }}

@@ -1,0 +1,42 @@
+name: Pull Request Notifier
+
+on:
+  pull_request:
+    types: [opened, closed, reopened, review_requested, review_request_removed]
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send PR notification to Slack
+        uses: ./
+        with:
+          service: 'slack'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK_URL }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_action: ${{ github.event.action }}
+          pr_author: ${{ github.actor }}
+          repo_name: ${{ github.repository }}
+
+      - name: Send PR notification to Discord
+        uses: ./
+        with:
+          service: 'discord'
+          webhook_url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_action: ${{ github.event.action }}
+          pr_author: ${{ github.actor }}
+          repo_name: ${{ github.repository }}
+
+      - name: Send PR notification to Teams
+        uses: ./
+        with:
+          service: 'teams'
+          webhook_url: ${{ secrets.TEAMS_WEBHOOK_URL }}
+          pr_title: ${{ github.event.pull_request.title }}
+          pr_url: ${{ github.event.pull_request.html_url }}
+          pr_action: ${{ github.event.action }}
+          pr_author: ${{ github.actor }}
+          repo_name: ${{ github.repository }}
