@@ -124,4 +124,7 @@ docker run --rm \
 
 ---
 
+## Images examples
+![Slack Example](images/image.png)
+
 ### **Ready to use for any engineering team. Feel free to contribute or extend!**
