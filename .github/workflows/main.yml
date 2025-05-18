@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Send PR notification to Slack
-        if: secrets.SLACK_WEBHOOK_URL != ''
+        if: ${{ secrets.SLACK_WEBHOOK_URL != '' }}
         uses: ./
         with:
           service: 'slack'
@@ -24,7 +24,7 @@ jobs:
           repo_name: ${{ github.repository }}
 
       - name: Send PR notification to Discord
-        if: secrets.DISCORD_WEBHOOK_URL != ''
+        if: ${{ secrets.DISCORD_WEBHOOK_URL != '' }}
         uses: ./
         with:
           service: 'discord'
@@ -36,7 +36,7 @@ jobs:
           repo_name: ${{ github.repository }}
 
       - name: Send PR notification to Teams
-        if: secrets.TEAMS_WEBHOOK_URL != ''
+        if: ${{ secrets.TEAMS_WEBHOOK_URL != '' }}
         uses: ./
         with:
           service: 'teams'
